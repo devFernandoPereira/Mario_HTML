@@ -1,0 +1,323 @@
+// =========================================================
+//  Super Mario World HTML — estilos da página
+//  Compile com:  npx sass style.scss style.css
+// =========================================================
+
+@use "sass:color";
+@use "sass:list";
+
+// ---------- Paleta ----------
+$sky-top:     #4f8ff7;
+$sky-bottom:  #a8dcff;
+$grass:       #3fbf3f;
+$grass-dark:  #0a6b0a;
+$dirt:        #d89048;
+$dirt-dark:   #9c5a22;
+$console:     #c9c6d6;
+$console-dk:  #8e8aa3;
+$console-lt:  #eceaf4;
+$screen-bg:   #0d0d14;
+$ink:         #1a1030;
+
+$snes-red:    #e4202a;
+$snes-yellow: #f8c800;
+$snes-green:  #2db84a;
+$snes-blue:   #2a5cf0;
+
+$pixel-font: 'Press Start 2P', monospace;
+$ground-h:   56px;
+
+// ---------- Mixins ----------
+@mixin pixel-shadow($c: #000, $d: 3px) {
+  text-shadow: $d $d 0 $c;
+}
+@mixin bevel($light, $dark, $w: 4px) {
+  box-shadow:
+    inset $w $w 0 $light,
+    inset (-$w) (-$w) 0 $dark;
+}
+@mixin small-screen {
+  @media (max-height: 560px), (max-width: 620px) { @content; }
+}
+
+// ---------- Base ----------
+*, *::before, *::after { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+body {
+  font-family: $pixel-font;
+  color: $ink;
+  background: linear-gradient(to bottom, $sky-top 0%, $sky-bottom 75%);
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  align-items: center;
+  justify-items: center;
+  padding-bottom: $ground-h;
+  position: relative;
+}
+
+// ---------- Céu: nuvens e chão ----------
+.sky {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+
+  .cloud {
+    position: absolute;
+    width: 96px;
+    height: 32px;
+    background: #fff;
+    border-radius: 16px;
+    opacity: .9;
+    animation: drift linear infinite;
+
+    &::before, &::after {
+      content: '';
+      position: absolute;
+      background: #fff;
+      border-radius: 50%;
+    }
+    &::before { width: 44px; height: 44px; left: 14px; top: -22px; }
+    &::after  { width: 36px; height: 36px; left: 46px; top: -16px; }
+
+    @for $i from 1 through 5 {
+      &:nth-child(#{$i}) {
+        top: 6% + ($i * 11%);
+        transform: scale(0.6 + ($i % 3) * 0.3);
+        animation-duration: 40s + ($i * 13s);
+        animation-delay: -($i * 9s);
+      }
+    }
+  }
+
+  .ground {
+    position: absolute;
+    left: 0; right: 0; bottom: 0;
+    height: $ground-h;
+    background:
+      linear-gradient(to bottom, $grass 0 12px, $grass-dark 12px 16px, transparent 16px),
+      radial-gradient(circle at 25% 60%, color.adjust($dirt, $lightness: 12%) 2px, transparent 3px) 0 0 / 24px 20px,
+      $dirt;
+    border-top: 3px solid color.adjust($grass-dark, $lightness: -5%);
+  }
+}
+
+@keyframes drift {
+  from { left: -140px; }
+  to   { left: 100%; }
+}
+
+// ---------- Cabeçalho / logo ----------
+.logo {
+  position: relative;
+  z-index: 1;
+  margin: 14px 0 6px;
+  text-align: center;
+  line-height: 1;
+
+  .super {
+    display: block;
+    font-size: 12px;
+    color: #fff;
+    letter-spacing: 4px;
+    margin-bottom: 8px;
+    @include pixel-shadow($ink, 2px);
+  }
+
+  .title {
+    font-size: clamp(16px, 3.4vw, 30px);
+    letter-spacing: 2px;
+
+    span {
+      display: inline-block;
+      -webkit-text-stroke: 1px $ink;
+      @include pixel-shadow($ink, 3px);
+      animation: bob 1.6s ease-in-out infinite;
+    }
+
+    $colors: $snes-red, $snes-yellow, $snes-green, $snes-blue;
+    @for $i from 1 through 11 {
+      span:nth-child(#{$i}) {
+        color: list.nth($colors, ($i % 4) + 1);
+        animation-delay: $i * 0.08s;
+      }
+    }
+  }
+
+  @include small-screen { display: none; }
+}
+
+@keyframes bob {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-3px); }
+}
+
+// ---------- Console / moldura da tela ----------
+.console {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 16px;
+}
+
+.bezel {
+  position: relative;
+  padding: 14px 14px 30px;
+  background: linear-gradient(160deg, $console-lt, $console 40%, $console-dk);
+  border-radius: 18px;
+  border: 3px solid color.adjust($console-dk, $lightness: -20%);
+  @include bevel(rgba(#fff, .7), rgba(#000, .25), 3px);
+  filter: drop-shadow(0 12px 0 rgba($ink, .25)) drop-shadow(0 20px 30px rgba($ink, .35));
+
+  // botões coloridos do SNES no canto
+  &::after {
+    content: '';
+    position: absolute;
+    right: 18px;
+    bottom: 9px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: $snes-red;
+    box-shadow:
+      -16px 0 0 $snes-yellow,
+      -32px 0 0 $snes-green,
+      -48px 0 0 $snes-blue;
+  }
+
+  .brand {
+    position: absolute;
+    left: 20px;
+    bottom: 8px;
+    font-size: 8px;
+    color: color.adjust($ink, $lightness: 35%);
+    letter-spacing: 2px;
+
+    .led {
+      display: inline-block;
+      width: 7px;
+      height: 7px;
+      margin-right: 6px;
+      border-radius: 50%;
+      background: #ff3030;
+      box-shadow: 0 0 6px #ff3030;
+      animation: blink 2.4s infinite;
+    }
+  }
+
+  @include small-screen {
+    padding: 6px;
+    border-radius: 10px;
+    &::after, .brand { display: none; }
+  }
+}
+
+@keyframes blink {
+  0%, 90%, 100% { opacity: 1; }
+  95%           { opacity: .3; }
+}
+
+.screen {
+  position: relative;
+  background: $screen-bg;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 4px solid #111;
+  box-shadow: inset 0 0 0 2px #333;
+
+  canvas {
+    display: block;
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+  }
+
+  // brilho de tela CRT bem suave
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background:
+      repeating-linear-gradient(to bottom, rgba(#000, .07) 0 1px, transparent 1px 3px),
+      radial-gradient(ellipse at center, transparent 60%, rgba(#000, .35) 100%);
+  }
+}
+
+// ---------- Painel de controles ----------
+.controls {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px 14px;
+  margin: 4px 16px 10px;
+  font-size: 8px;
+  color: #fff;
+  @include pixel-shadow($ink, 1px);
+
+  .key {
+    display: inline-block;
+    min-width: 20px;
+    padding: 4px 6px;
+    margin-right: 6px;
+    text-align: center;
+    color: $ink;
+    text-shadow: none;
+    background: $console-lt;
+    border-radius: 4px;
+    border-bottom: 3px solid $console-dk;
+  }
+
+  @include small-screen { display: none; }
+}
+
+// ---------- Botões de toque ----------
+#touch {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  display: none;
+  z-index: 10;
+
+  .b {
+    position: absolute;
+    pointer-events: auto;
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font: 12px $pixel-font;
+    color: #fff;
+    background: rgba($ink, .35);
+    border: 2px solid rgba(#fff, .6);
+    backdrop-filter: blur(2px);
+    transition: transform .05s, background .05s;
+
+    &.on {
+      transform: scale(.92);
+      background: rgba(#fff, .45);
+    }
+
+    &[data-k="jump"]  { background: rgba($snes-green, .55); }
+    &[data-k="run"]   { background: rgba($snes-yellow, .55); }
+    &[data-k="spin"]  { background: rgba($snes-blue, .55); }
+    &[data-k="start"] { background: rgba($snes-red, .55); }
+  }
+}

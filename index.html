@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<title>Super Mario World HTML</title>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="sky">
+  <div class="cloud"></div><div class="cloud"></div><div class="cloud"></div><div class="cloud"></div><div class="cloud"></div>
+  <div class="ground"></div>
+</div>
+
+<header class="logo">
+  <span class="super">SUPER</span>
+  <div class="title"><span>M</span><span>A</span><span>R</span><span>I</span><span>O</span>&nbsp;<span>W</span><span>O</span><span>R</span><span>L</span><span>D</span></div>
+</header>
+
+<main class="console" id="console">
+  <div class="bezel">
+    <div class="screen"><canvas id="game" width="256" height="224"></canvas></div>
+    <div class="brand"><span class="led"></span>SUPER HTML</div>
+  </div>
+</main>
+
+<footer class="controls">
+  <span><span class="key">&larr;&rarr;</span>ANDAR</span>
+  <span><span class="key">Z</span>PULAR</span>
+  <span><span class="key">X</span>CORRER/FOGO</span>
+  <span><span class="key">C</span>GIRO</span>
+  <span><span class="key">ENTER</span>PAUSA</span>
+  <span><span class="key">M</span>SOM</span>
+</footer>
+
+<div id="touch">
+  <div class="b" data-k="left"  style="left:16px;bottom:40px">&#9664;</div>
+  <div class="b" data-k="right" style="left:96px;bottom:40px">&#9654;</div>
+  <div class="b" data-k="down"  style="left:56px;bottom:-8px;width:56px;height:44px">&#9660;</div>
+  <div class="b" data-k="run"   style="right:96px;bottom:24px">B</div>
+  <div class="b" data-k="jump"  style="right:16px;bottom:56px">A</div>
+  <div class="b" data-k="spin"  style="right:24px;bottom:136px;width:48px;height:48px">GIRO</div>
+  <div class="b" data-k="start" style="left:50%;top:8px;transform:translateX(-50%);width:80px;height:32px;border-radius:12px">START</div>
+</div>
+<script src="game.js"></script>
+</body>
+</html>
